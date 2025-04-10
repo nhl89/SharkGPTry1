@@ -21,9 +21,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     })
 
-    const output = response.data?.outputs?.[0] || 'No result returned.'
-
-    return res.status(200).json({ result: output })
+    // Return full raw response for now
+    return res.status(200).json({
+      raw: response.data
+    })
   } catch (error: any) {
     console.error('Langflow call failed:', error?.message)
     return res.status(500).json({ error: 'Failed to contact Langflow API' })
