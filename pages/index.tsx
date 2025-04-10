@@ -2,18 +2,15 @@ import { useState } from "react";
 
 export default function Home() {
   const [url, setUrl] = useState("");
-  const [loading, setLoading] = useState(false);
   const [result, setResult] = useState("");
 
-  const handleCheckTrust = async () => {
-    setLoading(true);
-    setResult("");
-
+  const checkTrust = async () => {
+    setResult("Checking...");
     const payload = {
       input_value: url,
       output_type: "text",
       input_type: "chat",
-      session_id: "user_1",
+      session_id: "user_1"
     };
 
     try {
@@ -26,35 +23,25 @@ export default function Home() {
       });
 
       const data = await response.json();
-
-      if (data && data.result) {
-        setResult(data.result);
-      } else {
-        setResult("No result returned from Langflow.");
-      }
+      setResult(data.result || "No result returned.");
     } catch (err) {
-      setResult("Error connecting to Langflow API.");
+      console.error(err);
+      setResult("Error fetching result.");
     }
-
-    setLoading(false);
   };
 
   return (
-    <div style={{ padding: "2rem", fontFamily: "Arial" }}>
+    <div style={{ padding: 30, fontFamily: "Arial" }}>
       <h1>Check if this website is trustworthy</h1>
       <input
         type="text"
+        placeholder="https://example.com"
         value={url}
         onChange={(e) => setUrl(e.target.value)}
-        placeholder="Enter website URL"
-        style={{ marginRight: "1rem", padding: "0.4rem", width: "300px" }}
+        style={{ width: 300, marginRight: 10 }}
       />
-      <button onClick={handleCheckTrust} disabled={loading}>
-        {loading ? "Checking..." : "Check Trust"}
-      </button>
-      <div style={{ marginTop: "2rem", whiteSpace: "pre-wrap" }}>
-        {result}
-      </div>
+      <button onClick={checkTrust}>Check Trust</button>
+      <p>{result}</p>
     </div>
   );
 }
